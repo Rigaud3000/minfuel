@@ -1,0 +1,86 @@
+Update firebase.ts with Firestore integration
+ts
+Copy
+Edit
+// src/firebase.ts
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: "mindfuel-bed97.firebaseapp.com",
+  projectId: "mindfuel-bed97",
+  storageBucket: "mindfuel-bed97.appspot.com",
+  messagingSenderId: "767188496754",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: "G-LM1ZZZGZ98",
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+export { app, db, auth };
+🧠 2. Create Firestore functions (get, add users)
+ts
+Copy
+Edit
+// src/lib/firestore.ts
+import { db } from "@/firebase";
+import { collection, addDoc, getDocs, Timestamp } from "firebase/firestore";
+
+const usersRef = collection(db, "users");
+
+export async function addUser(name: string, email: string) {
+  return await addDoc(usersRef, {
+    name,
+    email,
+    createdAt: Timestamp.now(),
+  });
+}
+
+export async function fetchUsers() {
+  const snapshot = await getDocs(usersRef);
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+🧪 3. Use the functions inside your app
+tsx
+Copy
+Edit
+// Example: src/pages/Profile.tsx
+import { useEffect, useState } from "react";
+import { fetchUsers } from "@/lib/firestore";
+
+export default function Profile() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await fetchUsers();
+      setUsers(data);
+    };
+    load();
+  }, []);
+
+  return (
+    <div className="space-y-2">
+      <h2 className="text-xl font-semibold">Users</h2>
+      {users.map(user => (
+        <div key={user.id} className="bg-gray-700 p-3 rounded">
+          <p className="text-white">👤 {user.name}</p>
+          <p className="text-gray-300 text-sm">{user.email}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+✅ BONUS: Environment Setup in Replit (based on your screenshot)
+Add these secrets in Replit’s “Secrets” tab:
+
+Key	Value (from Firebase console)
+VITE_FIREBASE_API_KEY	your apiKey
+VITE_FIREBASE_PROJECT_ID	mindfuel-bed97
+VITE_FIREBASE_APP_ID	your appId
+
