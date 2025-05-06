@@ -1,0 +1,121 @@
+1. Add a Logout Button (Anywhere in App)
+You can place this in Navbar.tsx, Profile.tsx, or a UserMenu:
+
+tsx
+Copy
+Edit
+// Example: client/components/LogoutButton.tsx
+import { logout } from "@/firebaseAuth";
+import { useNavigate } from "wouter";
+
+export default function LogoutButton() {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/auth");
+  };
+
+  return (
+    <button
+      onClick={handleLogout}
+      className="text-sm bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded mt-2"
+    >
+      Logout
+    </button>
+  );
+}
+Then include this in any page:
+
+tsx
+Copy
+Edit
+import LogoutButton from "@/components/LogoutButton";
+// <LogoutButton />
+✅ 2. Protect Routes (Only Allow Logged-in Users)
+Create a wrapper component:
+
+tsx
+Copy
+Edit
+// client/components/ProtectedRoute.tsx
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase";
+import { useLocation } from "wouter";
+import { useEffect } from "react";
+
+export default function ProtectedRoute({ children }: { children: JSX.Element }) {
+  const [user, loading] = useAuthState(auth);
+  const [, navigate] = useLocation();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/auth");
+    }
+  }, [user, loading]);
+
+  if (loading) return <p className="text-white">Loading...</p>;
+  if (!user) return null;
+
+  return children;
+}
+Then wrap protected pages:
+
+tsx
+Copy
+Edit
+import ProtectedRoute from "@/components/ProtectedRoute";
+import Profile from "@/pages/Profile";
+
+// In your Router
+<Route path="/profile" component={() => (
+  <ProtectedRoute><Profile /></ProtectedRoute>
+)} />
+✅ 3. Start Role-Based Access (Optional for Admins/Coaches)
+You can store roles in Firestore (like "role": "coach"):
+
+ts
+Copy
+Edit
+// client/firebaseUser.ts (edit saveUserToFirestore)
+const data = {
+  email: user.email,
+  displayName: user.displayName || '',
+  photoURL: user.photoURL || '',
+  role: 'user', // default role
+  createdAt: new Date(),
+};
+Then use this in a component:
+
+tsx
+Copy
+Edit
+import { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "@/firebase";
+
+export default function AdminPanel() {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkRole = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const docSnap = await getDoc(doc(db, "users", user.uid));
+      const role = docSnap.data()?.role;
+      setIsAdmin(role === "admin");
+    };
+
+    checkRole();
+  }, []);
+
+  if (!isAdmin) return <p className="text-white">Access Denied</p>;
+
+  return (
+    <div className="text-white">
+      <h1 className="text-xl font-bold">Admin Dashboard</h1>
+      {/* Admin tools here */}
+    </div>
+  );
+}

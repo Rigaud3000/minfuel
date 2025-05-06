@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindFuel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#2D2D2D',secondary:'#34D399'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #E5E5E5;
+            height: 100vh;
+            width: 375px;
+            margin: 0 auto;
+            position: relative;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .font-['Pacifico'] {
+            font-family: 'Pacifico', serif;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .chart-container {
+            width: 100%;
+            height: 200px;
+        }
+        .progress-ring {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.3s;
+            stroke: #34D399;
+            stroke-width: 8;
+        }
+        .progress-ring-circle-bg {
+            stroke: #2A2A2A;
+            stroke-width: 8;
+        }
+    </style>
+</head>
+<body class="relative">
+    <!-- Nav Bar -->
+    <div class="fixed top-0 w-full z-50 bg-gray-900 shadow-md">
+        <div class="flex items-center justify-between px-4 py-3">
+            <div class="flex items-center">
+                <h1 class="text-xl font-['Pacifico'] text-secondary">MindFuel</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 flex items-center justify-center cursor-pointer">
+                    <i class="ri-notification-3-line text-gray-300 ri-lg"></i>
+                </div>
+                <div class="w-8 h-8 flex items-center justify-center cursor-pointer">
+                    <img src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20young%20woman%20with%20short%20dark%20hair%2C%20natural%20makeup%2C%20friendly%20smile%2C%20high%20quality%20portrait%2C%20isolated%20on%20dark%20background&width=100&height=100&seq=avatar1&orientation=squarish" class="w-8 h-8 rounded-full object-cover" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="pt-16 pb-20 px-4">
+        <!-- Welcome Section -->
+        <div class="mt-4 mb-6">
+            <h2 class="text-2xl font-semibold text-white">Hello, Emma!</h2>
+            <p class="text-gray-400">Day 8 of your sugar-free journey</p>
+        </div>
+
+        <!-- Daily Check-in Card -->
+        <div class="bg-gray-800 rounded-lg p-4 mb-6 shadow-lg">
+            <h3 class="text-lg font-medium text-white mb-3">How are you feeling today?</h3>
+            <div class="flex justify-between mb-4">
+                <button class="w-[70px] py-2 px-1 bg-gray-700 hover:bg-gray-600 rounded-button flex flex-col items-center cursor-pointer transition-colors">
+                    <div class="w-8 h-8 flex items-center justify-center">
+                        <i class="ri-emotion-happy-line text-yellow-400 ri-lg"></i>
+                    </div>
+                    <span class="text-xs mt-1 text-gray-300">Great</span>
+                </button>
+                <button class="w-[70px] py-2 px-1 bg-gray-700 hover:bg-gray-600 rounded-button flex flex-col items-center cursor-pointer transition-colors">
+                    <div class="w-8 h-8 flex items-center justify-center">
+                        <i class="ri-emotion-normal-line text-blue-400 ri-lg"></i>
+                    </div>
+                    <span class="text-xs mt-1 text-gray-300">Good</span>
+                </button>
+                <button class="w-[70px] py-2 px-1 bg-gray-700 hover:bg-gray-600 rounded-button flex flex-col items-center cursor-pointer transition-colors">
+                    <div class="w-8 h-8 flex items-center justify-center">
+                        <i class="ri-emotion-unhappy-line text-orange-400 ri-lg"></i>
+                    </div>
+                    <span class="text-xs mt-1 text-gray-300">Okay</span>
+                </button>
+                <button class="w-[70px] py-2 px-1 bg-gray-700 hover:bg-gray-600 rounded-button flex flex-col items-center cursor-pointer transition-colors">
+                    <div class="w-8 h-8 flex items-center justify-center">
+                        <i class="ri-emotion-sad-line text-red-400 ri-lg"></i>
+                    </div>
+                    <span class="text-xs mt-1 text-gray-300">Rough</span>
+                </button>
+            </div>
+            <h3 class="text-lg font-medium text-white mb-3">Craving intensity?</h3>
+            <div class="flex items-center mb-2">
+                <input type="range" min="0" max="10" value="3" class="w-full h-2 bg-gray-700 rounded-full appearance-none" id="cravingSlider">
+            </div>
+            <div class="flex justify-between text-xs text-gray-400">
+                <span>None</span>
+                <span>Mild</span>
+                <span>Strong</span>
+                <span>Intense</span>
+            </div>
+            <button class="w-full mt-4 py-3 bg-secondary hover:bg-green-500 text-gray-900 font-medium rounded-button cursor-pointer transition-colors">
+                Save Today's Check-in
+            </button>
+        </div>
+
+        <!-- Quick Actions -->
+        <h3 class="text-lg font-medium text-white mb-3">Quick Actions</h3>
+        <div class="grid grid-cols-3 gap-3 mb-6">
+            <div class="bg-gray-800 rounded-lg p-3 flex flex-col items-center cursor-pointer hover:bg-gray-700 transition-colors">
+                <div class="w-10 h-10 flex items-center justify-center bg-secondary/20 rounded-full mb-2">
+                    <i class="ri-message-3-line text-secondary ri-lg"></i>
+                </div>
+                <span class="text-xs text-center text-gray-300 whitespace-nowrap overflow-hidden text-overflow-ellipsis">AI Coach</span>
+            </div>
+            <div class="bg-gray-800 rounded-lg p-3 flex flex-col items-center cursor-pointer hover:bg-gray-700 transition-colors">
+                <div class="w-10 h-10 flex items-center justify-center bg-blue-500/20 rounded-full mb-2">
+                    <i class="ri-trophy-line text-blue-500 ri-lg"></i>
+                </div>
+                <span class="text-xs text-center text-gray-300 whitespace-nowrap overflow-hidden text-overflow-ellipsis">Challenges</span>
+            </div>
+            <div class="bg-gray-800 rounded-lg p-3 flex flex-col items-center cursor-pointer hover:bg-gray-700 transition-colors">
+                <div class="w-10 h-10 flex items-center justify-center bg-purple-500/20 rounded-full mb-2">
+                    <i class="ri-bar-chart-2-line text-purple-500 ri-lg"></i>
+                </div>
+                <span class="text-xs text-center text-gray-300 whitespace-nowrap overflow-hidden text-overflow-ellipsis">Progress</span>
+            </div>
+        </div>
+
+        <!-- Current Challenge -->
+        <div class="bg-gray-800 rounded-lg p-4 mb-6 shadow-lg">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-lg font-medium text-white">Current Challenge</h3>
+                <span class="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full">Day 8 of 14</span>
+            </div>
+            <h4 class="text-base font-medium text-white mb-2">14-Day Sugar Detox</h4>
+            
+            <!-- Progress Circle -->
+            <div class="flex items-center justify-center my-4">
+                <div class="relative w-32 h-32 flex items-center justify-center">
+                    <svg class="progress-ring" width="120" height="120">
+                        <circle class="progress-ring-circle-bg" cx="60" cy="60" r="54" fill="transparent"/>
+                        <circle class="progress-ring-circle" cx="60" cy="60" r="54" fill="transparent" stroke-dasharray="339.292" stroke-dashoffset="169.646"/>
+                    </svg>
+                    <div class="absolute text-center">
+                        <span class="text-2xl font-bold text-white">57%</span>
+                        <p class="text-xs text-gray-400">Completed</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Today's Tasks -->
+            <h4 class="text-base font-medium text-white mb-2">Today's Tasks</h4>
+            <div class="space-y-2 mb-3">
+                <div class="flex items-center">
+                    <input type="checkbox" id="task1" class="w-4 h-4 mr-2 accent-secondary">
+                    <label for="task1" class="text-sm text-gray-300">Log all meals</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="task2" class="w-4 h-4 mr-2 accent-secondary" checked>
+                    <label for="task2" class="text-sm text-gray-300">Drink 2L of water</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="task3" class="w-4 h-4 mr-2 accent-secondary">
+                    <label for="task3" class="text-sm text-gray-300">Avoid processed sugar</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="task4" class="w-4 h-4 mr-2 accent-secondary">
+                    <label for="task4" class="text-sm text-gray-300">10-min mindfulness</label>
+                </div>
+            </div>
+            <button class="w-full py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-button cursor-pointer transition-colors">
+                View Challenge Details
+            </button>
+        </div>
+
+        <!-- Progress Tracking -->
+        <h3 class="text-lg font-medium text-white mb-3">Your Progress</h3>
+        <div class="bg-gray-800 rounded-lg p-4 mb-6 shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="text-base font-medium text-white">Weekly Overview</h4>
+                <div class="flex items-center text-xs text-gray-400">
+                    <span>Apr 24 - Apr 30</span>
+                    <div class="w-6 h-6 flex items-center justify-center ml-1 cursor-pointer">
+                        <i class="ri-calendar-line ri-sm"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chart -->
+            <div class="chart-container" id="progressChart"></div>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-3 mt-4">
+                <div class="bg-gray-700 rounded-lg p-3">
+                    <div class="text-xs text-gray-400 mb-1">Sugar-free Days</div>
+                    <div class="flex items-end">
+                        <span class="text-xl font-semibold text-white">6</span>
+                        <span class="text-xs text-green-400 ml-2">+2 from last week</span>
+                    </div>
+                </div>
+                <div class="bg-gray-700 rounded-lg p-3">
+                    <div class="text-xs text-gray-400 mb-1">Craving Score</div>
+                    <div class="flex items-end">
+                        <span class="text-xl font-semibold text-white">3.2</span>
+                        <span class="text-xs text-green-400 ml-2">-1.5 from last week</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Community Leaderboard -->
+        <h3 class="text-lg font-medium text-white mb-3">Community Leaderboard</h3>
+        <div class="bg-gray-800 rounded-lg p-4 mb-6 shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 flex items-center justify-center bg-yellow-500/20 rounded-full mr-2">
+                        <i class="ri-trophy-fill text-yellow-500 ri-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-base font-medium text-white">Your Rank: #12</h4>
+                        <p class="text-xs text-gray-400">Top 5% this week</p>
+                    </div>
+                </div>
+                <span class="text-sm font-medium text-secondary">780 pts</span>
+            </div>
+            
+            <!-- Top Users -->
+            <div class="space-y-3">
+                <div class="flex items-center p-2 bg-gray-700 rounded-lg">
+                    <span class="text-sm font-bold text-white mr-3">1</span>
+                    <img src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20young%20man%20with%20glasses%2C%20short%20brown%20hair%2C%20friendly%20smile%2C%20high%20quality%20portrait%2C%20isolated%20on%20dark%20background&width=100&height=100&seq=avatar2&orientation=squarish" class="w-8 h-8 rounded-full object-cover mr-3" alt="User">
+                    <div class="flex-1">
+                        <h5 class="text-sm font-medium text-white">Michael R.</h5>
+                        <p class="text-xs text-gray-400">21-day streak</p>
+                    </div>
+                    <span class="text-sm font-medium text-white">1,245 pts</span>
+                </div>
+                <div class="flex items-center p-2 bg-gray-700 rounded-lg">
+                    <span class="text-sm font-bold text-white mr-3">2</span>
+                    <img src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20middle-aged%20woman%20with%20blonde%20hair%2C%20natural%20makeup%2C%20friendly%20smile%2C%20high%20quality%20portrait%2C%20isolated%20on%20dark%20background&width=100&height=100&seq=avatar3&orientation=squarish" class="w-8 h-8 rounded-full object-cover mr-3" alt="User">
+                    <div class="flex-1">
+                        <h5 class="text-sm font-medium text-white">Sarah T.</h5>
+                        <p class="text-xs text-gray-400">18-day streak</p>
+                    </div>
+                    <span class="text-sm font-medium text-white">1,120 pts</span>
+                </div>
+                <div class="flex items-center p-2 bg-gray-700 rounded-lg">
+                    <span class="text-sm font-bold text-white mr-3">3</span>
+                    <img src="https://readdy.ai/api/search-image?query=professional%20headshot%20of%20a%20young%20man%20with%20dark%20skin%2C%20short%20black%20hair%2C%20friendly%20smile%2C%20high%20quality%20portrait%2C%20isolated%20on%20dark%20background&width=100&height=100&seq=avatar4&orientation=squarish" class="w-8 h-8 rounded-full object-cover mr-3" alt="User">
+                    <div class="flex-1">
+                        <h5 class="text-sm font-medium text-white">James K.</h5>
+                        <p class="text-xs text-gray-400">14-day streak</p>
+                    </div>
+                    <span class="text-sm font-medium text-white">985 pts</span>
+                </div>
+            </div>
+            
+            <button class="w-full mt-4 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-button cursor-pointer transition-colors">
+                View Full Leaderboard
+            </button>
+        </div>
+
+        <!-- AI Coach Preview -->
+        <div class="bg-gray-800 rounded-lg p-4 mb-6 shadow-lg">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 flex items-center justify-center bg-secondary/20 rounded-full mr-3">
+                    <i class="ri-robot-line text-secondary ri-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-medium text-white">AI Craving Coach</h3>
+                    <p class="text-xs text-gray-400">Get personalized support</p>
+                </div>
+            </div>
+            <p class="text-sm text-gray-300 mb-4">Having a sugar craving? Chat with your AI coach for instant support and healthy alternatives.</p>
+            <div class="flex space-x-2">
+                <button class="flex-1 py-2 bg-secondary hover:bg-green-500 text-gray-900 font-medium text-sm rounded-button cursor-pointer transition-colors">
+                    Chat Now
+                </button>
+                <button class="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-button cursor-pointer transition-colors">
+                    View Tips
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="fixed bottom-0 w-full bg-gray-900 shadow-lg border-t border-gray-800">
+        <div class="grid grid-cols-5 h-16">
+            <div class="flex flex-col items-center justify-center cursor-pointer">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-home-5-fill text-secondary ri-lg"></i>
+                </div>
+                <span class="text-xs mt-1 text-secondary">Home</span>
+            </div>
+            <div class="flex flex-col items-center justify-center cursor-pointer">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-trophy-line text-gray-500 ri-lg"></i>
+                </div>
+                <span class="text-xs mt-1 text-gray-500">Challenges</span>
+            </div>
+            <div class="flex flex-col items-center justify-center cursor-pointer">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-message-3-line text-gray-500 ri-lg"></i>
+                </div>
+                <span class="text-xs mt-1 text-gray-500">AI Coach</span>
+            </div>
+            <div class="flex flex-col items-center justify-center cursor-pointer">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-bar-chart-2-line text-gray-500 ri-lg"></i>
+                </div>
+                <span class="text-xs mt-1 text-gray-500">Progress</span>
+            </div>
+            <div class="flex flex-col items-center justify-center cursor-pointer">
+                <div class="w-6 h-6 flex items-center justify-center">
+                    <i class="ri-user-line text-gray-500 ri-lg"></i>
+                </div>
+                <span class="text-xs mt-1 text-gray-500">Profile</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize progress chart
+            const progressChart = echarts.init(document.getElementById('progressChart'));
+            
+            const option = {
+                backgroundColor: 'transparent',
+                tooltip: {
+                    trigger: 'axis',
+                    backgroundColor: 'rgba(45, 45, 45, 0.8)',
+                    borderColor: 'rgba(45, 45, 45, 0.8)',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    top: '10%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    axisLine: {
+                        lineStyle: {
+                            color: '#555'
+                        }
+                    },
+                    axisLabel: {
+                        color: '#aaa'
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    splitLine: {
+                        lineStyle: {
+                            color: '#333'
+                        }
+                    },
+                    axisLabel: {
+                        color: '#aaa'
+                    }
+                },
+                series: [
+                    {
+                        name: 'Cravings',
+                        type: 'line',
+                        data: [7, 6, 5, 4, 3, 3, 2],
+                        smooth: true,
+                        lineStyle: {
+                            width: 3,
+                            color: '#ff6b6b'
+                        },
+                        itemStyle: {
+                            color: '#ff6b6b'
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgba(255, 107, 107, 0.3)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgba(255, 107, 107, 0.05)'
+                                }
+                            ])
+                        }
+                    },
+                    {
+                        name: 'Energy',
+                        type: 'line',
+                        data: [4, 5, 5, 6, 7, 8, 8],
+                        smooth: true,
+                        lineStyle: {
+                            width: 3,
+                            color: '#34D399'
+                        },
+                        itemStyle: {
+                            color: '#34D399'
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgba(52, 211, 153, 0.3)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgba(52, 211, 153, 0.05)'
+                                }
+                            ])
+                        }
+                    }
+                ]
+            };
+            
+            progressChart.setOption(option);
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                progressChart.resize();
+            });
+            
+            // Handle craving slider
+            const cravingSlider = document.getElementById('cravingSlider');
+            cravingSlider.addEventListener('input', function() {
+                // You can add logic here to handle the slider value changes
+            });
+        });
+    </script>
+</body>
+</html>
